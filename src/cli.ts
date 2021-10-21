@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import * as program from 'commander'
+import { Command } from 'commander';
 import * as chalk from 'chalk'
 import { genCode } from './index'
 
+const program = new Command();
 const args: any = program
-  .version(require('../package.json').version)
   .option('-s, --src <url|path>', 'The url or path to the Open API spec file', String, process.env.OPEN_API_SRC)
   .option('-o, --outDir <dir>', 'The path to the directory where files should be generated', process.env.OPEN_API_OUT)
   .option('-l, --language <js|ts>', 'The language of code to generate', process.env.OPEN_API_LANG)

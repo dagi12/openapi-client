@@ -1,11 +1,12 @@
 "use strict";
-const util_1 = require('../util');
-const support_1 = require('./support');
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.genTypesFile = void 0;
+const util_1 = require("../util");
+const support_1 = require("./support");
 function genTypes(spec, options) {
     const file = genTypesFile(spec, options);
     util_1.writeFileSync(file.path, file.contents);
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = genTypes;
 function genTypesFile(spec, options) {
     const lines = [];
@@ -136,7 +137,7 @@ export interface OperationParamGroups {
   header?: {[key: string]: string}${support_1.ST}
   path?: {[key: string]: string|number|boolean}${support_1.ST}
   query?: {[key: string]: string|string[]|number|boolean}${support_1.ST}
-  formData?: {[key: string]: string|number|boolean}${support_1.ST}
+  formData?: {[key: string]: string|number|boolean|File}${support_1.ST}
   body?: any${support_1.ST}
 }
 

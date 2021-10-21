@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getOperations = void 0;
 const SUPPORTED_METHODS = [
     'get',
     'put',
@@ -15,7 +17,7 @@ function getOperations(spec) {
 exports.getOperations = getOperations;
 function getPaths(spec) {
     return Object.keys(spec.paths || {})
-        .map(path => Object.assign({ path: path }, spec.paths[path]));
+        .map(path => Object.assign({ path }, spec.paths[path]));
 }
 function getPathOperations(pathInfo, spec) {
     return Object.keys(pathInfo)
@@ -33,7 +35,7 @@ function inheritPathParams(op, spec, pathInfo) {
     }
 }
 function getPathOperation(method, pathInfo, spec) {
-    const op = Object.assign({ method: method, path: pathInfo.path, parameters: [] }, pathInfo[method]);
+    const op = Object.assign({ method, path: pathInfo.path, parameters: [] }, pathInfo[method]);
     op.id = op.operationId;
     // if there's no explicit operationId given, create one based on the method and path
     if (!op.id) {
@@ -85,6 +87,6 @@ function getOperationSecurity(op, spec) {
     return security.map(def => {
         const id = Object.keys(def)[0];
         const scopes = def[id].length ? def[id] : undefined;
-        return { id: id, scopes: scopes };
+        return { id, scopes };
     });
 }

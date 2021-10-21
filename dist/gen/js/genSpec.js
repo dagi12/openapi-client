@@ -1,11 +1,12 @@
 "use strict";
-const support_1 = require('./support');
-const util_1 = require('../util');
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.genSpecFile = void 0;
+const support_1 = require("./support");
+const util_1 = require("../util");
 function genSpec(spec, options) {
     const file = genSpecFile(spec, options);
     util_1.writeFileSync(file.path, file.contents);
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = genSpec;
 function genSpecFile(spec, options) {
     return {

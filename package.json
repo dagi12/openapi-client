@@ -24,7 +24,6 @@
     "openapi": "dist/cli.js"
   },
   "scripts": {
-    "setup": "typings install",
     "prebuild": "npm run init",
     "build": "tsc",
     "predev": "npm run init",
@@ -48,8 +47,9 @@
     "codegen"
   ],
   "dependencies": {
+    "@types/node": "^16.11.2",
     "chalk": "^1.1.3",
-    "commander": "^2.9.0",
+    "commander": "^8.2.0",
     "isomorphic-fetch": "^2.2.1",
     "js-yaml": "^3.6.1",
     "mkdirp": "^0.5.1",
@@ -61,7 +61,6 @@
     "mocha": "^7.1.0",
     "shx": "^0.1.2",
     "tslint": "^3.10.2",
-    "typescript": "^1.8.10",
-    "typings": "^1.0.5"
+    "typescript": "^3.9.10"
   }
 }

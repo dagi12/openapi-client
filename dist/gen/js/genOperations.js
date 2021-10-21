@@ -1,11 +1,12 @@
 "use strict";
-const util_1 = require('../util');
-const support_1 = require('./support');
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getParamName = exports.renderParamSignature = exports.renderOperationGroup = exports.genOperationGroupFiles = void 0;
+const util_1 = require("../util");
+const support_1 = require("./support");
 function genOperations(spec, operations, options) {
     const files = genOperationGroupFiles(spec, operations, options);
     files.forEach(file => util_1.writeFileSync(file.path, file.contents));
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = genOperations;
 function genOperationGroupFiles(spec, operations, options) {
     const groups = util_1.groupOperationsByGroupName(operations);

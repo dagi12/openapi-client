@@ -1,7 +1,9 @@
 "use strict";
-const FS = require('fs');
-const PATH = require('path');
-const mkdirp = require('mkdirp');
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.removeOldFiles = exports.getBestResponse = exports.camelToUppercase = exports.join = exports.groupOperationsByGroupName = exports.writeFileSync = exports.exists = void 0;
+const FS = require("fs");
+const PATH = require("path");
+const mkdirp = require("mkdirp");
 function exists(filePath) {
     try {
         return FS.lstatSync(filePath);

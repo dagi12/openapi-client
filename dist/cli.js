@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 "use strict";
-const program = require('commander');
-const chalk = require('chalk');
-const index_1 = require('./index');
+Object.defineProperty(exports, "__esModule", { value: true });
+const commander_1 = require("commander");
+const chalk = require("chalk");
+const index_1 = require("./index");
+const program = new commander_1.Command();
 const args = program
-    .version(require('../package.json').version)
     .option('-s, --src <url|path>', 'The url or path to the Open API spec file', String, process.env.OPEN_API_SRC)
     .option('-o, --outDir <dir>', 'The path to the directory where files should be generated', process.env.OPEN_API_OUT)
     .option('-l, --language <js|ts>', 'The language of code to generate', process.env.OPEN_API_LANG)

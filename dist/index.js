@@ -1,9 +1,11 @@
 "use strict";
-require('isomorphic-fetch');
-const spec_1 = require('./spec');
-const js_1 = require('./gen/js');
-const util_1 = require('./gen/util');
-const assert = require('assert');
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.genCode = void 0;
+require("isomorphic-fetch");
+const spec_1 = require("./spec");
+const js_1 = require("./gen/js");
+const util_1 = require("./gen/util");
+const assert = require("assert");
 function genCode(options) {
     return verifyOptions(options)
         .then(options => spec_1.resolveSpec(options.src, { ignoreRefType: '#/definitions/' })

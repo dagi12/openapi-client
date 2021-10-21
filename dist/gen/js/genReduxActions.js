@@ -1,12 +1,13 @@
 "use strict";
-const util_1 = require('../util');
-const support_1 = require('./support');
-const genOperations_1 = require('./genOperations');
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.genReduxActionGroupFiles = void 0;
+const util_1 = require("../util");
+const support_1 = require("./support");
+const genOperations_1 = require("./genOperations");
 function genReduxActions(spec, operations, options) {
     const files = genReduxActionGroupFiles(spec, operations, options);
     files.forEach(file => util_1.writeFileSync(file.path, file.contents));
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = genReduxActions;
 function genReduxActionGroupFiles(spec, operations, options) {
     const groups = util_1.groupOperationsByGroupName(operations);

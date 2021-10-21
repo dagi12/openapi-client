@@ -1,4 +1,6 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getTSParamType = exports.getDocType = exports.formatDocDescription = exports.applyFormatOptions = exports.ST = exports.SP = exports.DEFAULT_SP = exports.DOC = void 0;
 exports.DOC = ' * ';
 exports.DEFAULT_SP = '  ';
 exports.SP = exports.DEFAULT_SP;
