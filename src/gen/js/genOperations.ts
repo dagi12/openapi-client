@@ -60,6 +60,7 @@ function renderHeader(
 	lines.push(`/** @module ${name} */`);
 	lines.push(`// Auto-generated, edits will be overwritten`);
 	lines.push(`import * as gateway from './gateway'${ST}`);
+	options.isolatedModules && lines.push(`import * as api from './types'${ST}`)
 	lines.push('');
 	return lines;
 }

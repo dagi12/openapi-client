@@ -29,6 +29,7 @@ function renderSpecView(spec: ApiSpec, options: ClientOptions): string {
 			: ''
 	}
 // Auto-generated, edits will be overwritten
+${options.isolatedModules && options.isolatedModules === true ? 'import * as api from \'../types\'' : ''}
 const spec${type} = ${stringify(view)}${ST}
 export default spec${ST}
 `;

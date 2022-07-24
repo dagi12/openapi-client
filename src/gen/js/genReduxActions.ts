@@ -56,6 +56,7 @@ ${
 }
 /** @module action/${name} */
 // Auto-generated, edits will be overwritten
+${options.isolatedModules && options.isolatedModules === true ? 'import * as api from \'../types\'' : ''}
 import * as ${name} from '../${name}'${ST}
 `.trim();
 	return code;

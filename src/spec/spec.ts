@@ -30,7 +30,7 @@ function loadJson(src: string, authKey: string): Promise<ApiSpec> {
 		const request = new Request(src, { headers });
 		return fetch(request).then((response) => response.json());
 	} else if (String(process) === '[object process]') {
-		return readFile(src).then((contents) => parseFileContents(contents, src));
+		return readFile(src).then((contents) => parseFileContents(contents, src) as ApiSpec);
 	} else {
 		throw new Error(`Unable to load api at '${src}'`);
 	}

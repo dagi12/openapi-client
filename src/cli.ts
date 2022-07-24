@@ -4,8 +4,9 @@ import { program } from 'commander';
 import chalk from 'chalk';
 import { genCode } from './index';
 
+const program = new Command();
 const args = program
-	.version(require('../package.json').version)
+
 	.requiredOption(
 		'-s, --src <url|path>',
 		'The url or path to the Open API spec file',
@@ -41,7 +42,7 @@ const args = program
 		'--indent <2|4|tab>',
 		'Indentation to use, defaults to 2 spaces',
 		process.env.OPEN_API_INDENT
-	)
+	).option('--isolatedModules', 'True if wanting to isolated modules with ts', process.env.OPEN_API_MODULES)
 	.parse(process.argv)
 	.opts<ClientOptions>();
 

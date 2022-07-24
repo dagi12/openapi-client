@@ -28,7 +28,8 @@ function renderHeader() {
 function renderDefinitions(spec: ApiSpec, options: ClientOptions): string[] {
 	const isTs = options.language === 'ts';
 	const defs = spec.definitions || {};
-	const typeLines = isTs ? [`namespace api {`] : undefined;
+	const isolatedModules = (options.isolatedModules)
+	const typeLines = isTs && !isolatedModules ? [`namespace api {`] : []
 	const docLines = [];
 	Object.keys(defs).forEach((name) => {
 		const def = defs[name];
@@ -39,7 +40,7 @@ function renderDefinitions(spec: ApiSpec, options: ClientOptions): string[] {
 	});
 	if (isTs) {
 		join(typeLines, renderTsDefaultTypes());
-		typeLines.push('}');
+		!isolatedModules && typeLines.push('}');
 	}
 	return isTs ? typeLines.concat(docLines) : docLines;
 }

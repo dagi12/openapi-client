@@ -6,6 +6,8 @@ interface ClientOptions {
 	indent?: '2' | '4' | 'tab';
 	semicolon?: boolean;
 	authKey: string;
+  semicolon?: boolean
+  isolatedModules?: boolean
 }
 
 interface ApiRequestData {

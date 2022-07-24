@@ -14,5 +14,15 @@ export function genServiceFile(options: ClientOptions) {
 		`${__dirname}/service.${options.language}.template`,
 		'utf8'
 	);
+	// when isolated modules options is set and true, add a import statement
+	// at the top of the service template
+	if (options.isolatedModules && options.isolatedModules === true) {
+		let lines = contents.split(/\r?\n/);
+		lines.splice(3, 0, 'import * as api from \'../types\'');
+
+		contents = "";
+		lines.forEach((line => contents += `${line}\n`));
+	}
+
 	return { path, contents };
 }
