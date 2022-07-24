@@ -4,3 +4,4 @@ typings
 /npm-debug.log
 .DS_Store
 *.sublime-workspace
+.idea

@@ -1,104 +1,114 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, "__esModule", {value: true});
 exports.genTypesFile = void 0;
 const util_1 = require("../util");
 const support_1 = require("./support");
+
 function genTypes(spec, options) {
-    const file = genTypesFile(spec, options);
-    (0, util_1.writeFileSync)(file.path, file.contents);
+	const file = genTypesFile(spec, options);
+	(0, util_1.writeFileSync)(file.path, file.contents);
 }
+
 exports.default = genTypes;
+
 function genTypesFile(spec, options) {
-    const lines = [];
-    (0, util_1.join)(lines, renderHeader());
-    (0, util_1.join)(lines, renderDefinitions(spec, options));
-    return {
-        path: `${options.outDir}/types.${options.language}`,
-        contents: lines.join('\n'),
-    };
+	const lines = [];
+	(0, util_1.join)(lines, renderHeader());
+	(0, util_1.join)(lines, renderDefinitions(spec, options));
+	return {
+		path: `${options.outDir}/types.${options.language}`,
+		contents: lines.join('\n'),
+	};
 }
+
 exports.genTypesFile = genTypesFile;
+
 function renderHeader() {
-    const lines = [];
-    lines.push(`// @ts-nocheck`);
-    lines.push(`/** @module types */`);
-    lines.push(`// Auto-generated, edits will be overwritten`);
-    lines.push(``);
-    return lines;
+	const lines = [];
+	lines.push(`// @ts-nocheck`);
+	lines.push(`/** @module types */`);
+	lines.push(`// Auto-generated, edits will be overwritten`);
+	lines.push(``);
+	return lines;
 }
+
 function renderDefinitions(spec, options) {
-    const isTs = options.language === 'ts';
-    const defs = spec.definitions || {};
-    const typeLines = isTs ? [`namespace api {`] : undefined;
-    const docLines = [];
-    Object.keys(defs).forEach((name) => {
-        const def = defs[name];
-        if (isTs) {
-            (0, util_1.join)(typeLines, renderTsType(name, def, options));
-        }
-        (0, util_1.join)(docLines, renderTypeDoc(name, def));
-    });
-    if (isTs) {
-        (0, util_1.join)(typeLines, renderTsDefaultTypes());
-        typeLines.push('}');
-    }
-    return isTs ? typeLines.concat(docLines) : docLines;
+	const isTs = options.language === 'ts';
+	const defs = spec.definitions || {};
+	const typeLines = isTs ? [`namespace api {`] : undefined;
+	const docLines = [];
+	Object.keys(defs).forEach((name) => {
+		const def = defs[name];
+		if (isTs) {
+			(0, util_1.join)(typeLines, renderTsType(name, def, options));
+		}
+		(0, util_1.join)(docLines, renderTypeDoc(name, def));
+	});
+	if (isTs) {
+		(0, util_1.join)(typeLines, renderTsDefaultTypes());
+		typeLines.push('}');
+	}
+	return isTs ? typeLines.concat(docLines) : docLines;
 }
+
 function renderTsType(name, def, options) {
-    if (def.allOf)
-        return renderTsInheritance(name, def.allOf, options);
-    if (def.type !== 'object') {
-        console.warn(`Unable to render ${name} ${def.type}, skipping.`);
-        return [];
-    }
-    const lines = [];
-    if (def.description) {
-        lines.push(`/**`);
-        lines.push(support_1.DOC + def.description.trim().replace(/\n/g, `\n${support_1.DOC}${support_1.SP}`));
-        lines.push(` */`);
-    }
-    lines.push(`export interface ${name} {`);
-    const required = def.required || [];
-    const props = Object.keys(def.properties || {});
-    const requiredProps = props.filter((p) => !!~required.indexOf(p));
-    const optionalProps = props.filter((p) => !~required.indexOf(p));
-    const requiredPropLines = requiredProps
-        .map((prop) => renderTsTypeProp(prop, def.properties[prop], true))
-        .reduce((a, b) => a.concat(b), []);
-    const optionalPropLines = optionalProps
-        .map((prop) => renderTsTypeProp(prop, def.properties[prop], false))
-        .reduce((a, b) => a.concat(b), []);
-    (0, util_1.join)(lines, requiredPropLines);
-    (0, util_1.join)(lines, optionalPropLines);
-    lines.push('}');
-    lines.push('');
-    return lines;
+	if (def.allOf)
+		return renderTsInheritance(name, def.allOf, options);
+	if (def.type !== 'object') {
+		console.warn(`Unable to render ${name} ${def.type}, skipping.`);
+		return [];
+	}
+	const lines = [];
+	if (def.description) {
+		lines.push(`/**`);
+		lines.push(support_1.DOC + def.description.trim().replace(/\n/g, `\n${support_1.DOC}${support_1.SP}`));
+		lines.push(` */`);
+	}
+	lines.push(`export interface ${name} {`);
+	const required = def.required || [];
+	const props = Object.keys(def.properties || {});
+	const requiredProps = props.filter((p) => !!~required.indexOf(p));
+	const optionalProps = props.filter((p) => !~required.indexOf(p));
+	const requiredPropLines = requiredProps
+		.map((prop) => renderTsTypeProp(prop, def.properties[prop], true))
+		.reduce((a, b) => a.concat(b), []);
+	const optionalPropLines = optionalProps
+		.map((prop) => renderTsTypeProp(prop, def.properties[prop], false))
+		.reduce((a, b) => a.concat(b), []);
+	(0, util_1.join)(lines, requiredPropLines);
+	(0, util_1.join)(lines, optionalPropLines);
+	lines.push('}');
+	lines.push('');
+	return lines;
 }
+
 function renderTsInheritance(name, allOf, options) {
-    verifyAllOf(name, allOf);
-    const ref = allOf[0];
-    const parentName = ref.$ref.split('/').pop();
-    const lines = renderTsType(name, allOf[1], options);
-    if (lines[0].startsWith('export interface'))
-        lines.shift();
-    lines.unshift(`export interface ${name} extends ${parentName} {`);
-    return lines;
+	verifyAllOf(name, allOf);
+	const ref = allOf[0];
+	const parentName = ref.$ref.split('/').pop();
+	const lines = renderTsType(name, allOf[1], options);
+	if (lines[0].startsWith('export interface'))
+		lines.shift();
+	lines.unshift(`export interface ${name} extends ${parentName} {`);
+	return lines;
 }
+
 function renderTsTypeProp(prop, info, required) {
-    const lines = [];
-    const type = (0, support_1.getTSParamType)(info, true);
-    if (info.description) {
-        lines.push(`${support_1.SP}/**`);
-        lines.push(`${support_1.SP}${support_1.DOC}` +
-            (info.description || '').trim().replace(/\n/g, `\n${support_1.SP}${support_1.DOC}${support_1.SP}`));
-        lines.push(`${support_1.SP} */`);
-    }
-    const req = required ? '' : '?';
-    lines.push(`${support_1.SP}${prop}${req}: ${type}${support_1.ST}`);
-    return lines;
+	const lines = [];
+	const type = (0, support_1.getTSParamType)(info, true);
+	if (info.description) {
+		lines.push(`${support_1.SP}/**`);
+		lines.push(`${support_1.SP}${support_1.DOC}` +
+			(info.description || '').trim().replace(/\n/g, `\n${support_1.SP}${support_1.DOC}${support_1.SP}`));
+		lines.push(`${support_1.SP} */`);
+	}
+	const req = required ? '' : '?';
+	lines.push(`${support_1.SP}${prop}${req}: ${type}${support_1.ST}`);
+	return lines;
 }
+
 function renderTsDefaultTypes() {
-    return `export interface OpenApiSpec {
+	return `export interface OpenApiSpec {
   host: string${support_1.ST}
   basePath: string${support_1.ST}
   schemes: string[]${support_1.ST}
@@ -307,55 +317,58 @@ export interface ServiceMeta {
 
 export type AsyncAction = (dispatch: (action: any) => void) => Promise<void>${support_1.ST}
 `
-        .replace(/  /g, support_1.SP)
-        .split('\n');
+		.replace(/  /g, support_1.SP)
+		.split('\n');
 }
+
 function renderTypeDoc(name, def) {
-    if (def.allOf)
-        return renderDocInheritance(name, def.allOf);
-    if (def.type !== 'object') {
-        console.warn(`Unable to render ${name} ${def.type}, skipping.`);
-        return [];
-    }
-    const group = 'types';
-    const lines = [
-        '/**',
-        `${support_1.DOC}@typedef ${name}`,
-        `${support_1.DOC}@memberof module:${group}`,
-    ];
-    const req = def.required || [];
-    const propLines = Object.keys(def.properties).map((prop) => {
-        const info = def.properties[prop];
-        const description = (info.description || '')
-            .trim()
-            .replace(/\n/g, `\n${support_1.DOC}${support_1.SP}`);
-        return `${support_1.DOC}@property {${(0, support_1.getDocType)(info)}} ${prop} ${description}`;
-    });
-    if (propLines.length)
-        lines.push(`${support_1.DOC}`);
-    (0, util_1.join)(lines, propLines);
-    lines.push(' */');
-    lines.push('');
-    return lines;
+	if (def.allOf)
+		return renderDocInheritance(name, def.allOf);
+	if (def.type !== 'object') {
+		console.warn(`Unable to render ${name} ${def.type}, skipping.`);
+		return [];
+	}
+	const group = 'types';
+	const lines = [
+		'/**',
+		`${support_1.DOC}@typedef ${name}`,
+		`${support_1.DOC}@memberof module:${group}`,
+	];
+	const req = def.required || [];
+	const propLines = !!def.properties ? Object.keys(def.properties).map((prop) => {
+		const info = def.properties[prop];
+		const description = (info.description || '')
+			.trim()
+			.replace(/\n/g, `\n${support_1.DOC}${support_1.SP}`);
+		return `${support_1.DOC}@property {${(0, support_1.getDocType)(info)}} ${prop} ${description}`;
+	}) : [];
+	if (propLines.length)
+		lines.push(`${support_1.DOC}`);
+	(0, util_1.join)(lines, propLines);
+	lines.push(' */');
+	lines.push('');
+	return lines;
 }
+
 function renderDocInheritance(name, allOf) {
-    verifyAllOf(name, allOf);
-    const ref = allOf[0];
-    const parentName = ref.$ref.split('/').pop();
-    const lines = renderTypeDoc(name, allOf[1]);
-    lines.splice(3, 0, `${support_1.DOC}@extends ${parentName}`);
-    return lines;
+	verifyAllOf(name, allOf);
+	const ref = allOf[0];
+	const parentName = ref.$ref.split('/').pop();
+	const lines = renderTypeDoc(name, allOf[1]);
+	lines.splice(3, 0, `${support_1.DOC}@extends ${parentName}`);
+	return lines;
 }
+
 function verifyAllOf(name, allOf) {
-    // Currently we interpret allOf as inheritance. Not strictly correct
-    // but seems to be how most model inheritance in Swagger and is consistent
-    // with other code generation tool
-    if (!allOf || allOf.length !== 2) {
-        console.log(allOf);
-        throw new Error(`Json schema allOf '${name}' must have two elements to be treated as inheritance`);
-    }
-    const ref = allOf[0];
-    if (!ref.$ref) {
-        throw new Error(`Json schema allOf '${name}' first element must be a $ref ${ref}`);
-    }
+	// Currently we interpret allOf as inheritance. Not strictly correct
+	// but seems to be how most model inheritance in Swagger and is consistent
+	// with other code generation tool
+	if (!allOf || allOf.length !== 2) {
+		console.log(allOf);
+		throw new Error(`Json schema allOf '${name}' must have two elements to be treated as inheritance`);
+	}
+	const ref = allOf[0];
+	if (!ref.$ref) {
+		throw new Error(`Json schema allOf '${name}' first element must be a $ref ${ref}`);
+	}
 }
