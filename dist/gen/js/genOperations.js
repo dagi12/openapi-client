@@ -37,6 +37,7 @@ function renderHeader(name, spec, options) {
     lines.push(`/** @module ${name} */`);
     lines.push(`// Auto-generated, edits will be overwritten`);
     lines.push(`import * as gateway from './gateway'${support_1.ST}`);
+    options.isolatedModules && lines.push(`import * as api from './types'${support_1.ST}`);
     lines.push('');
     return lines;
 }

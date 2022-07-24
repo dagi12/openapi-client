@@ -29,6 +29,7 @@ function renderSpecView(spec, options) {
         ? '// @ts-nocheck\n/// <reference path="../types.ts"/>'
         : ''}
 // Auto-generated, edits will be overwritten
+${options.isolatedModules && options.isolatedModules === true ? 'import * as api from \'../types\'' : ''}
 const spec${type} = ${stringify(view)}${support_1.ST}
 export default spec${support_1.ST}
 `;

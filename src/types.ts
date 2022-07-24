@@ -4,7 +4,6 @@ interface ClientOptions {
 	language: 'js' | 'ts';
 	redux?: boolean;
 	indent?: '2' | '4' | 'tab';
-	semicolon?: boolean;
 	authKey: string;
   semicolon?: boolean
   isolatedModules?: boolean

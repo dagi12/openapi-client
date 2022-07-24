@@ -4,7 +4,6 @@ import { program } from 'commander';
 import chalk from 'chalk';
 import { genCode } from './index';
 
-const program = new Command();
 const args = program
 
 	.requiredOption(

@@ -32,6 +32,7 @@ ${options.language === 'ts' && spec.definitions
         : ''}
 /** @module action/${name} */
 // Auto-generated, edits will be overwritten
+${options.isolatedModules && options.isolatedModules === true ? 'import * as api from \'../types\'' : ''}
 import * as ${name} from '../${name}'${support_1.ST}
 `.trim();
     return code;

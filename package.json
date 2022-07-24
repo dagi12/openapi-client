@@ -56,7 +56,6 @@
 		"js-yaml": "^4.1.0",
 		"mkdirp": "^1.0.4",
 		"mustache": "^4.2.0",
-    "@types/node": "^16.11.2",
     "isomorphic-fetch": "^2.2.1"
 	},
 	"devDependencies": {

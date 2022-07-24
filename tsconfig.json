@@ -1,9 +1,9 @@
 {
 	"compilerOptions": {
 		"outDir": "./dist",
-		"lib": ["DOM", "ES2021"],
+		"lib": ["dom", "esnext"],
 		"module": "commonjs",
-		"target": "ES2021",
+		"target": "esnext",
 		"esModuleInterop": true
 	},
 	"include": ["src/types.ts", "src/cli.ts"]

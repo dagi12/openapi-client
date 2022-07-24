@@ -12,7 +12,15 @@ function genService(options) {
 exports.default = genService;
 function genServiceFile(options) {
     const path = `${options.outDir}/gateway/index.${options.language}`;
-    const contents = (0, fs_1.readFileSync)(`${__dirname}/service.${options.language}.template`, 'utf8');
+    let contents = (0, fs_1.readFileSync)(`${__dirname}/service.${options.language}.template`, 'utf8');
+    // when isolated modules options is set and true, add a import statement
+    // at the top of the service template
+    if (options.isolatedModules && options.isolatedModules === true) {
+        let lines = contents.split(/\r?\n/);
+        lines.splice(3, 0, 'import * as api from \'../types\'');
+        contents = "";
+        lines.forEach((line => contents += `${line}\n`));
+    }
     return { path, contents };
 }
 exports.genServiceFile = genServiceFile;

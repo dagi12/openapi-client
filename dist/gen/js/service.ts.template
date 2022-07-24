@@ -69,7 +69,11 @@ function makeFetchRequest(req: api.ServiceRequest): Promise<Response> {
 		compress: true,
 		method: (req.method || 'get').toUpperCase(),
 		headers: req.headers,
-		body: req.body ? JSON.stringify(req.body) : undefined,
+		body: req.body
+			? req.body instanceof FormData
+				? req.body
+				: JSON.stringify(req.body)
+			: undefined,
 	};
 
 	if (options.fetchOptions) {
@@ -96,7 +100,7 @@ function buildRequest(
 	paramGroups = applyAuthorization(paramGroups, rights, spec);
 	const url = buildUrl(op, baseUrl, paramGroups, spec);
 	const headers = buildHeaders(op, paramGroups);
-	const body = buildBody(parameters.body);
+	const body = buildBody(parameters);
 	return {
 		method: op.method,
 		url,
@@ -109,10 +113,10 @@ function groupParams(
 	op: api.OperationInfo,
 	parameters: api.OperationParamGroups
 ) {
-	const groups = ['header', 'path', 'query', 'formData'].reduce(
-		(groups, name) => {
-			groups[name] = formatParamsGroup(groups[name]);
-			return groups;
+	const groups = ['header', 'path', 'query'].reduce(
+		(accGroups, name) => {
+			accGroups[name] = formatParamsGroup(accGroups[name]);
+			return accGroups;
 		},
 		parameters
 	);
@@ -120,9 +124,9 @@ function groupParams(
 	return groups;
 }
 
-function formatParamsGroup(groups: api.OperationParamGroups) {
-	return Object.keys(groups || {}).reduce((g, name) => {
-		const param = groups[name];
+function formatParamsGroup(group: Record<string, any>) {
+	return Object.keys(group || {}).reduce((g, name) => {
+		const param = group[name];
 		if (param !== undefined) {
 			g[name] = formatParam(param);
 		}
@@ -206,11 +210,30 @@ function buildHeaders(op: api.OperationInfo, parameters) {
 	return Object.assign(headers, parameters.header);
 }
 
-function buildBody(bodyParams: any) {
-	if (bodyParams) {
-		if (bodyParams.body) return bodyParams.body;
-		const key = Object.keys(bodyParams)[0];
-		if (key) return bodyParams[key];
+function buildBody(parameters: api.OperationParamGroups) {
+
+	const { body, formData } = parameters;;
+	if (formData) {
+		const fd = new FormData();
+		Object.entries(formData).forEach(([key, val]) => {
+			if (val instanceof File) {
+				fd.append(key, val, val.name);;
+			} else {
+				fd.append(key, JSON.stringify(val));;
+			}
+		});;
+		if (body) {
+			// Append any body to formData. Don't know if this will ever happen
+
+			Object.entries(body).forEach(([key, val]) =>
+				fd.append(key, JSON.stringify(val))
+			);;
+		}
+		return fd;;
+	} else if (body) {
+		if (body.body) return body.body;
+		const key = Object.keys(body)[0];
+		if (key) return body[key];
 	}
 	return undefined;
 }
