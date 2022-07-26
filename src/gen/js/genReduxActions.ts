@@ -69,8 +69,10 @@ function renderReduxActionBlock(
 ): string {
 	const lines = [];
 	const isTs = options.language === 'ts';
+	const actionBase = camelToUppercase(op.id)
 	const actionStart = camelToUppercase(op.id) + '_START';
-	const actionComplete = camelToUppercase(op.id);
+	const actionComplete = camelToUppercase(op.id) + '_FULFILLED';
+	const actionError = camelToUppercase(op.id) + '_REJECTED'
 	const infoParam = isTs ? 'info?: any' : 'info';
 	let paramSignature = renderParamSignature(op, options, `${op.group}.`);
 	paramSignature += `${paramSignature ? ', ' : ''}${infoParam}`;
@@ -85,23 +87,39 @@ function renderReduxActionBlock(
 	const returnType = response ? getTSParamType(response) : 'any';
 	return `
 export const ${actionStart} = 's/${op.group}/${actionStart}'${ST}
+export const ${actionBase} = 's/${op.group}/${actionBase}'${ST}
+export const ${actionError} = 's/${op.group}/${actionError}'${ST}
 export const ${actionComplete} = 's/${op.group}/${actionComplete}'${ST}
 ${isTs ? `export type ${actionComplete} = ${returnType}${ST}` : ''}
 
 export function ${op.id}(${paramSignature})${isTs ? ': api.AsyncAction' : ''} {
   return dispatch => {
     dispatch({ type: ${actionStart}, meta: { info, params: { ${params} } } })${ST}
+	
     return ${op.group}.${op.id}(${params})
-      .then(response => dispatch({
-        type: ${actionComplete},
-        payload: response.data,
-        error: response.error,
-        meta: {
-          res: response.raw,
-          info
-        }
-      }))${ST}
-  }${ST}
+      .then(response => {
+		if (response.error) {
+			dispatch({
+				type: ${actionError},
+				payload: response.data,
+				error: response.error,
+				meta: {
+				  res: response.raw,
+				  info
+				}
+			  })
+		}
+		dispatch({
+			type: ${actionComplete},
+			payload: response.data,
+			error: response.error,
+			meta: {
+			res: response.raw,
+			info
+			}
+	})
+  })
+}
 }
 `.replace(/  /g, SP);
 }

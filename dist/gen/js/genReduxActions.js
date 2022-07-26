@@ -40,8 +40,10 @@ import * as ${name} from '../${name}'${support_1.ST}
 function renderReduxActionBlock(spec, op, options) {
     const lines = [];
     const isTs = options.language === 'ts';
+    const actionBase = (0, util_1.camelToUppercase)(op.id);
     const actionStart = (0, util_1.camelToUppercase)(op.id) + '_START';
-    const actionComplete = (0, util_1.camelToUppercase)(op.id);
+    const actionComplete = (0, util_1.camelToUppercase)(op.id) + '_FULFILLED';
+    const actionError = (0, util_1.camelToUppercase)(op.id) + '_REJECTED';
     const infoParam = isTs ? 'info?: any' : 'info';
     let paramSignature = (0, genOperations_1.renderParamSignature)(op, options, `${op.group}.`);
     paramSignature += `${paramSignature ? ', ' : ''}${infoParam}`;
@@ -57,23 +59,39 @@ function renderReduxActionBlock(spec, op, options) {
     const returnType = response ? (0, support_1.getTSParamType)(response) : 'any';
     return `
 export const ${actionStart} = 's/${op.group}/${actionStart}'${support_1.ST}
+export const ${actionBase} = 's/${op.group}/${actionBase}'${support_1.ST}
+export const ${actionError} = 's/${op.group}/${actionError}'${support_1.ST}
 export const ${actionComplete} = 's/${op.group}/${actionComplete}'${support_1.ST}
 ${isTs ? `export type ${actionComplete} = ${returnType}${support_1.ST}` : ''}
 
 export function ${op.id}(${paramSignature})${isTs ? ': api.AsyncAction' : ''} {
   return dispatch => {
     dispatch({ type: ${actionStart}, meta: { info, params: { ${params} } } })${support_1.ST}
+	
     return ${op.group}.${op.id}(${params})
-      .then(response => dispatch({
-        type: ${actionComplete},
-        payload: response.data,
-        error: response.error,
-        meta: {
-          res: response.raw,
-          info
-        }
-      }))${support_1.ST}
-  }${support_1.ST}
+      .then(response => {
+		if (response.error) {
+			dispatch({
+				type: ${actionError},
+				payload: response.data,
+				error: response.error,
+				meta: {
+				  res: response.raw,
+				  info
+				}
+			  })
+		}
+		dispatch({
+			type: ${actionComplete},
+			payload: response.data,
+			error: response.error,
+			meta: {
+			res: response.raw,
+			info
+			}
+	})
+  })
+}
 }
 `.replace(/  /g, support_1.SP);
 }

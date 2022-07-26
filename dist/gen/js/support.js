@@ -150,7 +150,7 @@ ${indent}}`;
     }
     else {
         // No body returned.
-        if (param.code === '204' || param.code?.startsWith('3')) {
+        if (param.code === '204' || (param.code && param.code.startsWith('3'))) {
             return 'undefined';
         }
         console.warn((0, chalk_1.yellow)('Missing type information:'), param);

@@ -150,7 +150,7 @@ ${indent}}`;
 		);
 	} else {
 		// No body returned.
-		if (param.code === '204' || param.code?.startsWith('3')) {
+		if (param.code === '204' || (param.code!! && param.code.startsWith('3'))) {
 			return 'undefined';
 		}
 		console.warn(yellow('Missing type information:'), param);
